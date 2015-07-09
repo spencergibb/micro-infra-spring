@@ -1,19 +1,16 @@
 package com.ofg.infrastructure.discovery;
 
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
 import com.ofg.infrastructure.discovery.util.ProviderStrategyFactory;
 import com.ofg.infrastructure.discovery.watcher.DependencyWatcher;
 import com.ofg.infrastructure.discovery.watcher.presence.DefaultDependencyPresenceOnStartupVerifier;
 import com.ofg.infrastructure.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
-import org.apache.commons.io.IOUtils;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
-
-import java.io.IOException;
 
 /**
  * Configuration of microservice's dependencies resolving classes.
@@ -30,6 +27,7 @@ import java.io.IOException;
  * @see ServiceConfigurationResolver
  */
 @Configuration
+@Import(ServiceConfigurationResolverConfiguration.class)
 public class DependencyResolutionConfiguration {
 
     @Autowired(required = false) DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
@@ -47,8 +45,4 @@ public class DependencyResolutionConfiguration {
         return new ZookeeperServiceResolver(serviceConfigurationResolver, serviceDiscovery, curatorFramework, factory != null ? factory : new ProviderStrategyFactory());
     }
 
-    @Bean
-    ServiceConfigurationResolver serviceConfigurationResolver(@Value("${microservice.config.file:classpath:microservice.json}") Resource microserviceConfig) throws IOException {
-        return new ServiceConfigurationResolver(IOUtils.toString(microserviceConfig.getInputStream()));
-    }
 }

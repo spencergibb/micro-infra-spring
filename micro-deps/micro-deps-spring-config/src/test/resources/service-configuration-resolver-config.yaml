@@ -1,0 +1,1 @@
+microservice.config.file: 'classpath:service-configuration-resolver-microservice.json'
