@@ -4,10 +4,12 @@ import com.ofg.infrastructure.property.decrypt.JceUnlimitedStrengthUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.bootstrap.config.PropertySourceBootstrapProperties;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
@@ -68,5 +70,13 @@ public class ExternalPropertiesConfiguration implements ApplicationContextInitia
         public String decrypt(String encryptedText) {
             throw new UnsupportedOperationException("Decryption is not supported. Did you configure the encryption key/keystore correctly?");
         }
+    }
+
+    @Bean
+    @Primary
+    PropertySourceBootstrapProperties propertySourceBootstrapProperties() {
+        PropertySourceBootstrapProperties propertySourceBootstrapProperties = new PropertySourceBootstrapProperties();
+        propertySourceBootstrapProperties.setOverrideSystemProperties(false);
+        return propertySourceBootstrapProperties;
     }
 }
